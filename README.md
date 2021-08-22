@@ -10,7 +10,7 @@ In order to connect to Salesforce, provide connection details in sidebar form \
 url in format: https://...my.salesforce.com \
 password in format: password of a user concatenated with rest api token, so <password><api_token> \
 consumer key: client id from rest api application defined in salesforce \
-consumer secret: client secret from rest api application defined in salesforce \
+consumer secret: client secret from rest api application defined in salesforce
 
 ## autocomplete
 In your streamlit instance in share.streamlit.io you can define own secret file. There you can provide connection details and then autopopulate connection form using autocomplete button. \
