@@ -27,4 +27,4 @@ username = "<username>"
 password = "<password correspoding to username above>"
 token = "<rest_api_token>"
 ```
-Keep in mind that each value has to be provided in quotes.
+Keep in mind that each value has to be provided in quotes, but without ```<>```
