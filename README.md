@@ -3,7 +3,7 @@ This application allows to extract base information about structure of Saleforce
 Written in python using streamlit micro framework
 
 ## connection
-In order to connect to Salesforce, provide connection details in sidebar form
+In order to connect to Salesforce, provide connection details in sidebar form \
 url in format: https://...my.salesforce.com
 password in format: password of a user concatenated with rest api token, so <password><api_token>
 consumer key: client id from rest api application defined in salesforce
