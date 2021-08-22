@@ -8,7 +8,7 @@ Please refer to [streamlit.io](https://streamlit.io) in order to find out, how t
 ## connection
 In order to connect to Salesforce, provide connection details in sidebar form \
 url in format: https://...my.salesforce.com \
-password in format: password of a user concatenated with rest api token, so <password><api_token> \
+password in format: password of a user concatenated with rest api token, so {password}{api_token} \
 consumer key: client id from rest api application defined in salesforce \
 consumer secret: client secret from rest api application defined in salesforce
 
