@@ -17,7 +17,7 @@ In your streamlit instance in share.streamlit.io you can define own secret file.
 Secret file has to be defined as follows:
 
 ```
-auto_complete_password=<put password that you will use in autocomplete form>
+auto_complete_password="<put password that you will use in autocomplete form>"
 
 [CONNECTION]
 url = "<https://...my.salesforce.com>"
@@ -27,3 +27,4 @@ username = "<username>"
 password = "<password correspoding to username above>"
 token = "<rest_api_token>"
 ```
+Keep in mind that each value has to be provided in quotes.
