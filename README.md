@@ -22,6 +22,6 @@ auto_complete_password="<put password that you will use in autocomplete form>"
 url = "<https://...my.salesforce.com>"
 username = "<username>"
 password = "<password correspoding to username above>"
-token = "<rest_api_token>"
+token = "<api_token>"
 ```
 Keep in mind that each value has to be provided in quotes, but without ```<>```
