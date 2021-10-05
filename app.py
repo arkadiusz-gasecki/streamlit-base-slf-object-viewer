@@ -22,33 +22,72 @@ st.markdown(
     )
 
 
+####### helper function downloaded from internet #############
+
+import xml.dom.minidom
+
+def getUniqueElementValueFromXmlString(xmlString, elementName):
+	"""
+	Extracts an element value from an XML string.
+	For example, invoking
+	getUniqueElementValueFromXmlString(
+		'<?xml version="1.0" encoding="UTF-8"?><foo>bar</foo>', 'foo')
+	should return the value 'bar'.
+	"""
+	xmlStringAsDom = xml.dom.minidom.parseString(xmlString)
+	elementsByName = xmlStringAsDom.getElementsByTagName(elementName)
+	elementValue = None
+	if len(elementsByName) > 0:
+		elementValue = (
+			elementsByName[0]
+			.toxml()
+			.replace('<' + elementName + '>', '')
+			.replace('</' + elementName + '>', '')
+		)
+	return elementValue
+
 
 ######################## DEFINITION OF FUNCTIONS #############################################
 
 ########### login ##############
-def login(url, consumer_key, consumer_secret, username, password):
-	url = url.rstrip("/")
+def soap_login(url, username, password):
 
-	# prepare login statement
-	request_url = '/'.join([url,'services','oauth2','token'])
-	body = {
-		'grant_type': 'password'
-	  , 'client_id': consumer_key
-	  , 'client_secret': consumer_secret
-	  , 'username': username
-	  , 'password': password
+	login_soap_url = '/'.join([url,'services','Soap','u','33.0'])
+	
+	login_soap_request_headers = {
+		'content-type': 'text/xml',
+		'charset': 'UTF-8',
+		'SOAPAction': 'login'
 	}
 
-	login_response = requests.request("POST", request_url, data=body)
+	login_soap_request_body = """<?xml version="1.0" encoding="utf-8" ?>
+        <soapenv:Envelope
+                xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                xmlns:urn="urn:partner.soap.sforce.com">
+            <soapenv:Header>
+                <urn:CallOptions>
+                    <urn:client>{client_id}</urn:client>
+                    <urn:defaultNamespace>sf</urn:defaultNamespace>
+                </urn:CallOptions>
+            </soapenv:Header>
+            <soapenv:Body>
+                <urn:login>
+                    <urn:username>{username}</urn:username>
+                    <urn:password>{password}</urn:password>
+                </urn:login>
+            </soapenv:Body>
+        </soapenv:Envelope>""".format(username=username, password=password, client_id='RestForce')
+
+	login_response = requests.post(login_soap_url, login_soap_request_body, headers=login_soap_request_headers)
 	if login_response.status_code != 200:
 		st.write("Error "+str(login_response.status_code))
 		st.write(json.loads(login_response.text))
 	else:
 		st.sidebar.write("Login successful")
-		response = json.loads(login_response.text)
-		st.session_state['token'] = response['access_token']
+		st.session_state['token'] = getUniqueElementValueFromXmlString(login_response.content, 'sessionId')
 		st.session_state['url'] = url
 		return 'Success'
+
 
 ########### load objects ##############
 def load_objects():
@@ -203,8 +242,6 @@ if auto == True or st.session_state.get('autocomplete_form', 'nok') == 'ok':
 		elif pwd == secrets_password or st.session_state.get('autocomplete_form','nok') == 'ok':
 			try:
 				cached_url      = st.secrets["CONNECTION"]["url"]
-				cached_key      = st.secrets["CONNECTION"]["client_id"]
-				cached_secret   = st.secrets["CONNECTION"]["client_secret"]
 				cached_user     = st.secrets["CONNECTION"]["username"]
 				cached_password = st.secrets["CONNECTION"]["password"] + st.secrets["CONNECTION"]["token"]
 				st.session_state['autocomplete_form'] = 'ok'
@@ -224,15 +261,13 @@ form 		= st.sidebar.form(key='conn_form')
 url 		= form.text_input('url', cached_url, key='11')
 username 	= form.text_input('username', cached_user, key='12')
 password 	= form.text_input('password', cached_password, type="password", key='13')
-consumer_key 	= form.text_input('consumer key', cached_key, type="password", key='14')
-consumer_secret = form.text_input('consumer secret', cached_secret, type="password", key='15')
 submit_connect 	= form.form_submit_button(label='Login')
 
 
 ######################## LOGIN ACTION SECTION #############################################
 if submit_connect:
 	try:
-		status = login(url, consumer_key, consumer_secret, username, password)
+		status = soap_login(url, username, password)
 		if status == 'Success':
 			try:
 				st.session_state['objects'] = load_objects()
