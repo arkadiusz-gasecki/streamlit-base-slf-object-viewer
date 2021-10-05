@@ -154,10 +154,12 @@ def show_object(object_name):
 
 	return (object_structure, validation_rules, additional_columns, df)
 
-########### prepare CSV file for download ##############
-def prepare_export_file(df):
-	csv = df.to_csv().encode()
-	return csv
+########### generate link to download CSV file ##############
+def get_table_download_link_csv(df,filename):
+    csv = df.to_csv().encode()
+    b64 = base64.b64encode(csv).decode()
+    href = f'<a href="data:file/csv;base64,{b64}" download="'+filename+'.csv" target="_blank">Download csv file</a>'
+    return href
 
 
 ########### logout ##############
@@ -269,7 +271,7 @@ if object_selection:
 
 if object_structure != '':
 	st.markdown('## Object structure ##')
-	st.download_button('Download csv file',prepare_export_file(df),file_name=filename+'.csv')
+	st.markdown(get_table_download_link_csv(df,filename), unsafe_allow_html=True)
 	components.html(object_structure,height=500,scrolling=True)
 
 ## show validation rules
@@ -295,5 +297,5 @@ if st.sidebar.button('Logout', key='logout'):
 	except Exception as e:
 		st.write("Unexpected error when trying to log out: {}".format(e))
 
-
-
+### stop which is not really needed
+st.stop()
